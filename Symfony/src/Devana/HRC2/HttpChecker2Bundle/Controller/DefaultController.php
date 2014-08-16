@@ -28,7 +28,6 @@ class DefaultController extends Controller
         // Decode URL data from the request
         $request = $this->get('request');
         $jsonData = $request->getContent();
-        error_log($jsonData);
         $submittedUrls = json_decode($jsonData);
 
         // Get ID for the current session
