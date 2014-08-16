@@ -1,0 +1,11 @@
+http_checker2_homepage:
+    path:     /hrc2
+    defaults: { _controller: HttpChecker2Bundle:Default:index }
+
+http_checker2_session:
+    path: /hrc2/createSession
+    defaults: {_controller: HttpChecker2Bundle:Default:session }
+
+http_checker2_request:
+    path:   /hrc2/request
+    defaults: { _controller: HttpChecker2Bundle:Default:request }

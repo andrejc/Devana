@@ -1,0 +1,3 @@
+services:
+    socket_listener:
+        class: Devana\HRC\Service\SocketListener

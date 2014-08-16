@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en" ng-app="HttpResponseChecker">
+<head>
+    <meta charset="utf-8">
+    <title>HTTP Response Checker</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.0-beta.17/angular.min.js"></script>
+    <script src="{{ asset('js/HRC2Controller.js') }}"></script>
+    <script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+    <script src="http://code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="{{ asset('css/stylesheet.css') }}"> 
+
+    <script type="text/ng-template" id="showUrl">   
+        <td ng-if="url.isRedirect()"><img src="{{ asset('images/icon_redir.png') }}" width="12" height="12"></img></td>
+        <td ng-if="!url.isRedirect()"><b>[[url.index]]</b></td>
+        <td style="text-align:left"><a href="[[url.address]]">[[url.address]]</a></td>
+        <td><font class="hover" title="[[url.getResponseData().explanation]]" color="[[responseColor(url.responseCode)]]">
+            <span ng-if="url.isProcessed()">[[url.responseCode]]</span></font>
+            <span ng-if="!url.isProcessed()">Still working...</span>
+        </td>
+
+        <td><font class="hover" title="[[url.getResponseData().explanation]]" color="[[responseColor(url.responseCode)]]">
+            <span ng-if="url.isProcessed()">[[url.getResponseData().text]]</span>
+            <span ng-if="!url.isProcessed()"><img src="{{ asset('images/icon_loading.gif') }}"></img></span>
+        </td>
+
+        <td ng-if="url.isProcessed()">[[url.contentLength | number]]</td>
+        <td ng-if="!url.isProcessed()"><img src="{{ asset('images/icon_loading.gif') }}"></img></td>
+    </script>
+</head>
+<body ng-controller="HRC2Controller">
+    <div id="wrapper">
+        <h1>HTTP Response Checker</h1>
+        <div class="input">
+            <h4>Enter up to [[MAX_URLS]] URLs:</h4>
+            <textarea name="urls" ng-model="input" ng-change="onInputChange()"></textarea>
+            <div ng-if="totalUrls">Number of URLs: [[totalUrls]]</div>
+            <div ng-if="totalUrls > MAX_URLS" class="warning">Warning: The total number of entered URLs exceeds the maximum allowed number. <br/> You can still submit the request, but only first [[MAX_URLS]] URLs will be processed.</div>
+            <div ng-if="socketClosed" class="warning">Error: Could not establish connection with the server. It could be that maximum number of connections has been reached <br/> (up to 3 connection per client are allowed)</div>
+            <div><button class="btn btn-info" ng-disabled="socketClosed" ng-click="submitData()">Submit</button></div>
+        </div>
+        <div id="results">
+            <div class="batch" ng-repeat="batch in batches">
+                <hr>
+                <h3 id="batch[[batch.id]]">Batch [[batch.id+1]]</h3>
+                <div class="progress">
+                    <div class="progress-bar" role="progressbar" style="width: [[batch.getPercentageDone() | number:0]]%">
+                        [[batch.getPercentageDone()]]%
+                    </div>
+                </div>  
+      
+                <table class="table">
+                    <tr>
+                        <th>ID</th>
+                        <th style="text-align:left">URL</th>
+                        <th>Response code</th>
+                        <th>Response description</th>
+                        <th>Content length</th>
+                    </tr>
+                    <tr ng-repeat="url in batch.getUrls()" ng-class="{ redirect: url.isRedirect() }" ng-include="'showUrl'"></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

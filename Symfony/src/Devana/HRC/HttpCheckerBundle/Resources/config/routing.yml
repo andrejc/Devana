@@ -1,0 +1,3 @@
+devana_http_checker_homepage:
+    path:     /hrc
+    defaults: { _controller: HttpCheckerBundle:Default:index }
